@@ -1,0 +1,5 @@
+confluent-kafka==1.9.0
+prometheus-client==0.14.1
+pycountry==22.3.5
+PyYAML==6.0
+pyyml==0.0.2

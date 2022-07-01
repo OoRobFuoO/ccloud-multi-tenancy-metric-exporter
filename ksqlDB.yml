@@ -1,0 +1,7 @@
+ksqlDB:
+  required: true
+  clusters:
+    # - cluster-id: ksql.service.id or cloud ksqldb cluster id
+    #   country: the owner country
+    #   domain: the owner domain
+    #   env: environment
