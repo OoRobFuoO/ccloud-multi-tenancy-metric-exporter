@@ -5,7 +5,10 @@
 This project is created to parse existing cluster topic naming and determine the distribution for multi tenancy purpose for Confluent Cloud users.
 
 In the current version, the exporter only support the following topic naming convention:
+
+```
 <CountryCode>.<Environment>.<BusinessDomain>.<Sub-Business Domain>.<FreeTextTopicName>
+```
 
 ![Overview](./overview.png)
 
