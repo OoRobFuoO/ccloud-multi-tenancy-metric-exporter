@@ -2,7 +2,10 @@
 
 ## Overview
 
-This project is created to parse existing cluster topic distribution for multi tenancy purpose for Confluent Cloud users.
+This project is created to parse existing cluster topic naming and determine the distribution for multi tenancy purpose for Confluent Cloud users.
+
+In the current version, the exporter only support the following topic naming convention:
+<CountryCode>.<Environment>.<BusinessDomain>.<Sub-Business Domain>.<FreeTextTopicName>
 
 ## Requirements
 
@@ -23,3 +26,8 @@ This project is created to parse existing cluster topic distribution for multi t
 ## Note
 
 * Both `client.yml` and `ksqlDB.yml` will be reloaded at the beginning of each scape trigger. This allow user to dynamically maintain the cluster definition without restarting the program.
+
+## Future features
+
+* Support custom separator
+* Support custom topic naming convention
