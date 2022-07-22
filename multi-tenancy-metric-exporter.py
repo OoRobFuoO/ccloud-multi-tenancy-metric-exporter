@@ -5,6 +5,7 @@ import yaml
 import time
 import pycountry
 import logging
+import os
 
 # Create a metric to track time spent and requests made.
 TOPIC_PARTITION = Gauge('confluent_kafka_topic_partitions_count', 'Topic Partition Count', labelnames=['kafka_id', 'topic', 'country', 'env', 'businessDomain', 'topicType', 'ksqlDBCluster'])
@@ -93,10 +94,10 @@ def retrieveClusterPartitions(bootstrap, api_key, api_password):
              # convert topic name to upper case for consistany reason
              setMetric(clusterID, t.topic.upper(), len(t.partitions))
 
-def main():
+def main(clientConf, ksqlDBConf):
     global api_key, api_password
     global docs, ksqlDBDef
-    with open('client.yml', 'r') as file:
+    with open(clientConf, 'r') as file:
         try:
             docs = yaml.safe_load(file)
             # Start up the server to expose the metrics.
@@ -104,13 +105,13 @@ def main():
 
             while True:
                 TOPIC_PARTITION.clear()
-                with open('ksqlDB.yml', 'r') as ksqlDBfile:
+                with open(ksqlDBConf, 'r') as ksqlDBfile:
                     try:
                         ksqlDBDef = yaml.safe_load(ksqlDBfile)
                     except yaml.YAMLError as exc:
                         print(exc)
 
-                with open('client.yml', 'r') as file:
+                with open(clientConf, 'r') as file:
                     try:
                         docs = yaml.safe_load(file)
                         scrap_interval = docs['config']['scrap_interval']
@@ -124,4 +125,8 @@ def main():
         except yaml.YAMLError as exc:
             print(exc)
 
-main()
+if __name__ == '__main__':
+    clientConf = os.environ.get('CC_CLIENT_CONFIG_PATH', './config/client.yml')
+    ksqlDBConf = os.environ.get('CC_KSQLDB_CONFIG_PATH', './config/ksqlDB.yml')
+
+    main(clientConf, ksqlDBConf)

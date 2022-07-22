@@ -1,0 +1,8 @@
+config:
+  scrap_interval: 60
+  port: 8000
+  clusters:
+    # - bootstrap-server:
+    #   basic_auth:
+    #     username:
+    #     password:
