@@ -45,6 +45,21 @@ docker run -p 8000:8000 -v /Users/robfu/GitHub/ccloud-multi-tenancy-metric-expor
 
 If user want to embed the config file into the image as a standard build, Dockerfile is available for user to create and build its own docker image with its own config file.
 
+# Report Generator
+
+The report generator will interact with the prometheus to souce topic distribution to create a pivoted summary.
+
+## Step to prepare
+
+* Review and update the prometheus URL in the `report.yml`
+** NOTE: Domain ownership defintion for managed ksqlDB and Conenct will be added in the next released
+* Go to Confluent Cloud UI and download the billing csv
+* Excute the script with the billing csv to create the summary view
+
+```
+python3 ./generateReport.py -r 2022-08 -b invoice.csv
+```
+
 ## Note
 
 * Both `client.yml` and `ksqlDB.yml` will be reloaded at the beginning of each scape trigger. This allow user to dynamically maintain the cluster definition without restarting the program.
