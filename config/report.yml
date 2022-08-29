@@ -1,0 +1,18 @@
+config:
+  prometheusURL: http://localhost:9090/api/v1/query
+  ksqlDB:
+    clusters:
+      - cluster-id:
+        country:
+        domain:
+        env:
+  connect:
+    clusters:
+      - cluster-id:
+        country:
+        domain:
+        env: 
+      # - cluster-id: ksql.service.id or cloud ksqldb cluster id
+      #   country: the owner country
+      #   domain: the owner domain
+      #   env: environment
