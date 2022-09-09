@@ -17,6 +17,9 @@ countryDomainTopicSummary = []
 billingData = {}
 clusterBill = {}
 reportConf = {}
+promURL = ""
+promUser = ""
+promPassword = ""
 
 def parseResult(targetMonth):
 
@@ -25,25 +28,26 @@ def parseResult(targetMonth):
     report.printCountryDomainTopicSummary(countryDomainTopicSummary, len(clusterTopicSummary))
     report.close()
 
-def collectData(dateStart, dateEnd, url):
+
+def collectData(dateStart, dateEnd):
     global clusterTopicSummary
     global countryDomainTopicSummary
     # fetch cluster topics summary
-    temp = fetchFromPrometheus("sum by (kafka_id) (confluent_kafka_topic_partitions_count)", dateStart, dateEnd, url)
+    temp = fetchFromPrometheus("sum by (kafka_id) (confluent_kafka_topic_partitions_count)", dateStart, dateEnd)
     for metric in temp["result"]:
         clusterTopicSummary.append({'kafka_id': metric["metric"]["kafka_id"], 'value': metric["value"][1]})
     # fetch topic info from country domain
-    temp = fetchFromPrometheus("sum by (country,kafka_id,businessDomain) (confluent_kafka_topic_partitions_count)", dateStart, dateEnd, url)
+    temp = fetchFromPrometheus("sum by (country,kafka_id,businessDomain) (confluent_kafka_topic_partitions_count)", dateStart, dateEnd)
     for metric in temp["result"]:
         countryDomainTopicSummary.append({'country': metric["metric"]["country"], 'businessDomain': metric["metric"]["businessDomain"], 'kafka_id': metric["metric"]["kafka_id"], 'value': metric["value"][1]})
 
 
-def fetchFromPrometheus(query, dateStart, dateEnd, url):
+def fetchFromPrometheus(query, dateStart, dateEnd):
     promQueryParams = {"query": query,
                        "start": dateStart.strftime("%Y-%m-%d"),
                        "end": dateEnd.strftime("%Y-%m-%d")}
 
-    res = requests.get(url, params=promQueryParams)
+    res = requests.get(promURL, params=promQueryParams, auth=(promUser, promPassword))
     usageData = res.json()
     if usageData["status"] == "success":
         return usageData["data"]
@@ -71,14 +75,19 @@ def main():
     targetMonth = ''
     dateStart = datetime.now()
     dateEnd = datetime.now()
-    promURL = "http://localhost:9090/api/v1/query"
+    global promURL
+    global promUser
+    global promPassword
     billingCSV = ''
     global reportConf
 
     reportConf = os.environ.get('CC_REPORT_CONFIG_PATH', './config/report.yml')
     with open(reportConf, 'r') as file:
         reportConf = yaml.safe_load(file)
-
+        print("promURL: {}, UserName: {}, Password, {}".format(reportConf['config']['prometheusURL'], reportConf['config']['username'], reportConf['config']['password']))
+        promURL = reportConf['config']['prometheusURL']
+        promUser = reportConf['config']['username']
+        promPassword = reportConf['config']['password']
     # Take the input from argument if supplied (Automation mode)
     # Ask for user input is no argument is provided (User mode)
     try:
@@ -102,7 +111,7 @@ def main():
       print("Incorrect data format, should be YYYY-MM")
 
     parseBillingData(billingCSV)
-    collectData(dateStart, dateEnd, promURL)
+    collectData(dateStart, dateEnd)
     parseResult(targetMonth)
 
 
