@@ -6,6 +6,7 @@ import getopt
 import pandas as pd
 import os
 import yaml
+import logging
 from datetime import datetime
 from datetime import timedelta
 
@@ -84,7 +85,6 @@ def main():
     reportConf = os.environ.get('CC_REPORT_CONFIG_PATH', './config/report.yml')
     with open(reportConf, 'r') as file:
         reportConf = yaml.safe_load(file)
-        print("promURL: {}, UserName: {}, Password, {}".format(reportConf['config']['prometheusURL'], reportConf['config']['username'], reportConf['config']['password']))
         promURL = reportConf['config']['prometheusURL']
         promUser = reportConf['config']['username']
         promPassword = reportConf['config']['password']
