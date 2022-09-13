@@ -163,8 +163,8 @@ class ReportWriter:
             self.detailWorksheet.write('B'+str(row), metric["businessDomain"])
             self.detailWorksheet.write('C'+str(row), metric["kafka_id"])
             self.detailWorksheet.write('D'+str(row), metric["value"])
-            self.detailWorksheet.write_formula('E'+str(row), '=D'+str(row)+'/VLOOKUP(C'+str(row)+',Summary!A4:B'+str(4+totalCluster)+',2)')
-            self.detailWorksheet.write_formula('F'+str(row), '=E'+str(row)+'*VLOOKUP(C'+str(row)+',ClusterBilling!A:B,2)')
+            self.detailWorksheet.write_formula('E'+str(row), '=D'+str(row)+'/VLOOKUP(C'+str(row)+',Summary!A4:B'+str(4+totalCluster)+',2,false)')
+            self.detailWorksheet.write_formula('F'+str(row), '=E'+str(row)+'*VLOOKUP(C'+str(row)+',ClusterBilling!A:B,2,false)')
             row=row+1
 
     def close(self):
