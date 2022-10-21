@@ -44,7 +44,15 @@ def setMetric(clusterID, topicName, partitionCount):
         if topicName.startswith("_CONFLUENT-KSQL-") and not(topicName.endswith("COMMAND_TOPIC")) and ksqlDBDef['ksqlDB']['required']:
             #ksqlDB internal topic
             tempTopicName = topicName[16:]
-            ksqlDBClusterID = tempTopicName[:tempTopicName.find("QUERY")]
+            ksqlDBClusterID = tempTopicName
+
+            if tempTopicName.find("QUERY") != -1:
+                ksqlDBClusterID = tempTopicName[:tempTopicName.find("QUERY")]
+            elif tempTopicName.find("TRANSIENT_TRANSIENT") != -1:
+                ksqlDBClusterID = tempTopicName[:tempTopicName.find("TRANSIENT_TRANSIENT")]
+            else:
+                ksqlDBClusterID = tempTopicName
+
             try:
                 result=next(z for z in ksqlDBDef['ksqlDB']['clusters'] if z['cluster-id'].upper() == ksqlDBClusterID)
                 topicCountry = result['country']
